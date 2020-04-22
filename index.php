@@ -32,8 +32,8 @@ if (isset($config[$id])) {
     if ($config[$id]["new_ip"] != $ip) {
         $config[$id]["old_ip"] = $config[$id]["new_ip"];
         $config[$id]["new_ip"] = $ip;
-        file_put_contents(__DIR__ . "/data.php", "<?php return " . var_export($config,1) . ";?>", 0777);
-        file_put_contents(__DIR__ . "/refresh.php", "<?php return " . var_export($config[$id],1) . ";?>", 0777);
+        file_put_contents(__DIR__ . "/config/data.php", "<?php return " . var_export($config,1) . ";?>", FILE_BINARY);
+        file_put_contents(__DIR__ . "/config/refresh.php", "<?php return " . var_export($config[$id],1) . ";?>", FILE_BINARY);
     }
     echo $id . ":" . $ip;
 } else {
