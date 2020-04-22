@@ -3,7 +3,7 @@
 
 while (true) {
     if (file_exists(__DIR__ . "/config/refresh.php")) {
-        $config = include(__DIR__ . "/config/refresh.php");
+        $config = require(__DIR__ . "/config/refresh.php");
 
         foreach ($config["prot"] as $k => $v) {
             $oldIdList = findID($config["old_ip"], $config["port"], $v);
