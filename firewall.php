@@ -1,6 +1,5 @@
 <?php
 
-
 while (true) {
     if (file_exists(__DIR__ . "/config/refresh.php")) {
         $config = require(__DIR__ . "/config/refresh.php");
@@ -16,43 +15,36 @@ while (true) {
                         exec($cmd, $output);
                         var_dump("replace:", $cmd, "\n", $output);
                     }
-
                 }
             } else {
                 foreach ($config['prot'] as $k => $v) {
                     $newIdList = findID($config["new_ip"], $config["port"], $v);
                     if (count($newIdList) > 0) {
-
+                        
                     } else {
                         $cmd = "iptables -A DOCKER  -p $v -m $v -s {$config["new_ip"]} --dport {$config["port"]} -j ACCEPT";
                         exec($cmd, $output);
                         var_dump("add:", $cmd, "\n", $output);
                     }
                 }
-
-
             }
         }
 //        unlink(__DIR__."/config/refresh.php");
     }
     sleep(1);
-
 }
 
-
-function findID($ip, $port, $prot)
-{
+function findID($ip, $port, $prot) {
 
     $list = getRules();
     $ret = array();
     foreach ($list as $k => $v) {
-        if ($v[2] == $prot && $v[4] == $ip && $v[7] == "dpt:" . $port) {
+        if (($v[2] == $prot && $v[4] == $ip && $v[7] == "dpt:" . $port) || ($v[2] == $prot && $v[4] == "0.0.0.0/0" && $v[7] == "dpt:" . $port)) {
             $ret[$v[0]] = array("id" => $v[0], "prot" => $v[2]);
         }
     }
     return $ret;
 }
-
 
 /**
  *
@@ -81,15 +73,14 @@ function findID($ip, $port, $prot)
  * string(8) "dpt:9999"
  * }
  */
-function getRules()
-{
+function getRules() {
     $context = exec("iptables -L DOCKER -n --line-number", $output);
 //    var_dump($output);
 
     foreach ($output as $k => $v) {
         if (strlen($v) > 3) {
             $tmpArr = explode(" ", $v);
-            if ((int)$tmpArr[0] == $tmpArr[0] && (int)$tmpArr[0] > 0) {
+            if ((int) $tmpArr[0] == $tmpArr[0] && (int) $tmpArr[0] > 0) {
                 $tmpCLeanArr = array();
                 foreach ($tmpArr as $k1 => $v1) {
                     if (strlen($v1) > 0) {
